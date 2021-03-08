@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Header from '../../common/Header';
-import "./Login.css";
+import './Login.css';
+import ReactDOM from 'react-dom';
+import Home from '../home/Home';
 
 import { Card, FormControl, FormHelperText, Typography, InputLabel, Input, Button } from '@material-ui/core/';
 
@@ -39,10 +41,13 @@ class Login extends Component {
 
         if ((this.state.username === dummyUsername) && (this.state.password === dummyPassword)) {
             window.sessionStorage.setItem("access-token", accessToken);
+            ReactDOM.render(<Home  />, document.getElementById('root'));
         } else if (isInputFieldsValid) {
             this.setState({ incorrectCredentialsAlert: "dispBlock" })
         }
     }
+
+
 
     render() {
         return (
