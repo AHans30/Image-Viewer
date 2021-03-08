@@ -1,0 +1,28 @@
+.app-header {
+    background-color: #263238;
+    height: 36px;
+    padding: 8px 32px 8px 16px;
+}
+
+#logo-parent {
+    display: flex;
+    float: left;
+    /* margin-top: 8px;
+    margin-left: 8px; */
+    margin: auto;
+    width: auto;
+}
+
+#logo-child {
+    color: #fff;
+    font-size: 18px;
+    /* margin: 0; */
+    /* position: absolute; */
+    /* top: 50%; */
+    /* -ms-transform: translateY(-50%); */
+    /* transform: translateY(-50%); */
+    margin: auto auto;
+    float: left;
+    margin-top: 8px;
+    margin-left: 8px;
+}
