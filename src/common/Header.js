@@ -3,9 +3,6 @@ import './Header.css'
 
 export class Header extends Component {
 
-    constructor() {
-        super();
-    }
 
     render() {
         return (

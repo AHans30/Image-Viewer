@@ -1,0 +1,23 @@
+.card-container {
+    align-items: center;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-content {
+    margin: 20px 40px;
+}
+
+.dispNone {
+    display: none;
+}
+
+.dispBlock {
+    display: block;
+}
+
+.red {
+    color: red;
+}
+
