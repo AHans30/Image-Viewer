@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import Header from '../../common/Header';
 import './Login.css';
-import ReactDOM from 'react-dom';
-import Home from '../home/Home';
+import { Link } from "react-router-dom";
 
 import { Card, FormControl, FormHelperText, Typography, InputLabel, Input, Button } from '@material-ui/core/';
 
@@ -37,17 +36,15 @@ class Login extends Component {
 
         let dummyUsername = "ahans30";
         let dummyPassword = "password";
-        let accessToken = "IGQVJYemhhTkJqM0RhbTl0WEVfd1lObUZAZARDBVMU1GbkJBX0lCYVNtaVJiUEpVeGI1STJIQjNERnVac1daNDBvSmJCcFlfOWNTTnNtaVBSa1lNcTZAhUnVvbmhqc3FRZAmE4OE1HUGdnbkRhOTYzcmtkQUxXNDEwV2ZAVbkt3";
+        let accessToken = "IGQVJVTm8xZAzV3SDNjaVA4elZAMTExsekNRdzlEbU0wM2kybTBvT2hab1NrcjBWQVRlbWI4SEhMU0xrYU44RDByT3NBVk1NTk55LW0zNTZAaek9wTWc2Q0NjbW5VRzVVSzN3U0VGVk5TR2swQlI0VUE3X2JSQnJEZAXdJSi13";
 
         if ((this.state.username === dummyUsername) && (this.state.password === dummyPassword)) {
             window.sessionStorage.setItem("access-token", accessToken);
-            ReactDOM.render(<Home  />, document.getElementById('root'));
+            this.props.history.push("/home");
         } else if (isInputFieldsValid) {
             this.setState({ incorrectCredentialsAlert: "dispBlock" })
         }
     }
-
-
 
     render() {
         return (
@@ -88,7 +85,14 @@ class Login extends Component {
                             </FormControl>
                             <br />
                             <br />
-                            <Button variant="contained" color="primary" onClick={this.loginClickHandler}>LOGIN</Button>
+                            <Button 
+                            component={Link} to={'/home'} 
+                            variant="contained" 
+                            color="primary" 
+                            onClick={this.loginClickHandler}
+                            >
+                            LOGIN
+                            </Button>
                         </div>
                     </Card>
                 </div>
