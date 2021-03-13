@@ -1,0 +1,53 @@
+.comments {
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+}
+
+.comment-section {
+    flex-direction: column;
+    display: flex;
+}
+
+.home-page-container {
+    margin: 20px 80px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    display: flex;
+}
+
+.dispBlock {
+    display: block;
+}
+
+.dispNone {
+    display: none;
+}
+
+.grid-item {
+    margin: 20px 10px;
+    width: 530px;
+    height: 0%;
+}
+
+.images {
+    margin: 5px 20px;
+}
+
+.card-media {
+    /* height: 150%;9:16 proportion */
+    padding-top: 56.25%; 
+    height: 56.25%;
+    width: 100%
+}
+
+.likes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px 0px;
+}
+
+.control {
+    width: 400px;
+}
