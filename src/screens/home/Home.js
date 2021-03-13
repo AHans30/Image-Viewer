@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, Typography, Divider, Tooltip } from '@material-ui/core/';
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import { FormControl, Input, InputLabel, Button, FormHelperText } from "@material-ui/core/";
+
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
 class Home extends Component {
@@ -15,7 +16,7 @@ class Home extends Component {
             //Profile picture is hard coded since it is not available from Instagram APIs
             profilePic: "https://instagram.fbom35-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158183129_947536299373688_8583409002884684500_n.jpg?tp=1&_nc_ht=instagram.fbom35-1.fna.fbcdn.net&_nc_ohc=wKQEc3Qxs6QAX8bsWM8&oh=074d47a1fd4d3d1de7f4387ce9f6285e&oe=60720D64",
             allMediaIds: [],
-            imageListForSearch: [],
+            imageBase: [],
             imageList: [],
             likeIcon: "dispBlock",
             likedIcon: "dispNone",
@@ -115,7 +116,7 @@ class Home extends Component {
             return a.timestamp - b.timestamp;
           });
         this.setState({ imageList: images });
-        this.setState({ imageListForSearch: images });
+        this.setState({ imageBase: images });
 
 
     }
@@ -218,6 +219,13 @@ class Home extends Component {
         return datetimeString;
     }
 
+    searchKeywordHandler = (keyword) => {
+        let filterImages = this.state.imageBase.filter((image) => {
+                return String(image.caption).toLowerCase().indexOf(keyword) >= 0;
+            });
+        this.setState({ imageList: filterImages});
+    };
+
     render() {
         const { classes } = this.props;
         const isLoggedIn = this.state.isLoggedIn;
@@ -227,7 +235,14 @@ class Home extends Component {
                 {/* display the contents only if the user is logged in */}
                 {isLoggedIn &&
                     <div>
-                        <Header />
+                        <Header
+                            isLoggedIn={this.state.isLoggedIn}
+                            profilePic={this.state.profilePic}
+                            baseUrl={this.props.baseUrl}
+                            list={this.state.imageBase}
+                            callbackFromHome={this.searchKeywordHandler}
+                            history={this.props.history}
+                        />
                         <div className="home-page-container">
                             {this.state.imageList.map((image) => (
                                 <Card className="grid-item" key={"image" + image.id}>

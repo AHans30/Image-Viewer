@@ -1,28 +1,32 @@
 .app-header {
     background-color: #263238;
-    height: 36px;
-    padding: 8px 32px 8px 16px;
+    height: 70px;
 }
 
-#logo-parent {
-    display: flex;
-    float: left;
-    /* margin-top: 8px;
-    margin-left: 8px; */
-    margin: auto;
-    width: auto;
+.profile-container {
+    margin-left: 10px;
+    margin-right: 10px;
+    float: right;
 }
 
-#logo-child {
-    color: #fff;
+.logo {
     font-size: 18px;
-    /* margin: 0; */
-    /* position: absolute; */
-    /* top: 50%; */
-    /* -ms-transform: translateY(-50%); */
-    /* transform: translateY(-50%); */
-    margin: auto auto;
     float: left;
-    margin-top: 8px;
-    margin-left: 8px;
+    color: #fff;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.icon {
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+}
+
+
+.avatar {
+    border-radius: 50%;
+    height: 45px;
+    width: 45px;
 }
