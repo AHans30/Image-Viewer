@@ -18,7 +18,6 @@ class Profile extends Component {
             profilePic: "https://instagram.fbom35-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158183129_947536299373688_8583409002884684500_n.jpg?tp=1&_nc_ht=instagram.fbom35-1.fna.fbcdn.net&_nc_ohc=wKQEc3Qxs6QAX8bsWM8&oh=074d47a1fd4d3d1de7f4387ce9f6285e&oe=60720D64",
             allMediaIds: [],
 
-
             totalPostCount: 0,
             followingCount: 31,
             followersCount: 26,
@@ -28,13 +27,14 @@ class Profile extends Component {
             name: "",
             imageBase: [],
             showModal: false,
+
             imageUrl: "",
             username: "",
             caption: "",
             likeIcon: "",
             likedIcon: "",
             likesCount: 0,
-            postId: 0,
+            imageId: 0,
             comment: "",
         };
     }
@@ -56,9 +56,6 @@ class Profile extends Component {
                 if (this.status === 200) {
                     that.setState({
                         allMediaIds: JSON.parse(this.responseText).data,
-                    });
-                    that.setState({
-                        totalPostCount: that.state.allMediaIds&& that.state.allMediaIds.length,
                     });
                     that.state.allMediaIds &&
                         that.state.allMediaIds.map((mediaObject) => {
@@ -123,6 +120,10 @@ class Profile extends Component {
         this.setState({ imageBase: images });
         this.setState({ username: imageResponse.username });
 
+        this.setState({
+            totalPostCount: this.state.totalPostCount + 1
+        });
+
     }
 
     editModalHandler = () => {
@@ -133,14 +134,11 @@ class Profile extends Component {
         this.setState({ editModal: false, updateRequiredAlert: "dispNone" });
     };
 
-    //function to handle the input change event
     inputNameChangeHandler = (event) => {
         this.setState({ name: event.target.value });
     };
 
-    //function to edit the name of the user
     editNameHandler = () => {
-        //if the input field is empty display the required message or else set fullname of the user and close the modal
         this.state.name === ""
             ? this.setState({ updateRequiredAlert: "dispBlock" })
             : this.setState({ accountName: this.state.name, editModal: false });
@@ -150,36 +148,36 @@ class Profile extends Component {
         this.setState({ showModal: false });
     };
 
-    postModalOpenHandler = (postId) => {
+    postModalOpenHandler = (imageId) => {
         this.setState({ showModal: true });
         //filter the post according to the id and display it
-        let clickedPost = this.state.imageBase.filter((post) => {
-            return post.id === postId;
+        let modalImage = this.state.imageBase.filter((image) => {
+            return image.id === imageId;
         })[0];
 
         this.setState({
-            imageUrl: clickedPost.media_url,
-            username: clickedPost.username,
-            caption: clickedPost.caption,
-            likeIcon: clickedPost.likeIcon,
-            likedIcon: clickedPost.likedIcon,
-            likesCount: clickedPost.likesCount,
-            postId: clickedPost.id,
-            postComments: clickedPost.postComments,
+            imageUrl: modalImage.media_url,
+            username: modalImage.username,
+            caption: modalImage.caption,
+            likeIcon: modalImage.likeIcon,
+            likedIcon: modalImage.likedIcon,
+            likesCount: modalImage.likesCount,
+            imageId: modalImage.id,
+            postComments: modalImage.postComments,
         });
     };
 
     likeClickHandler = (id) => {
         let imageBase = this.state.imageBase;
-        imageBase.forEach(function (post) {
-            if (post.id === id) {
-                post.likesCount += 1;
-                post.likeIcon = "dispNone";
-                post.likedIcon = "dispBlock";
+        imageBase.forEach(function (image) {
+            if (image.id === id) {
+                image.likesCount += 1;
+                image.likeIcon = "dispNone";
+                image.likedIcon = "dispBlock";
                 this.setState({
                     likeIcon: "dispNone",
                     likedIcon: "dispBlock",
-                    likesCount: post.likesCount,
+                    likesCount: image.likesCount,
                 });
             }
         }, this);
@@ -187,15 +185,15 @@ class Profile extends Component {
 
     likedClickHandler = (id) => {
         let imageBase = this.state.imageBase;
-        imageBase.forEach(function (post) {
-            if (post.id === id) {
-                post.likesCount -= 1;
-                post.likeIcon = "dispBlock";
-                post.likedIcon = "dispNone";
+        imageBase.forEach(function (image) {
+            if (image.id === id) {
+                image.likesCount -= 1;
+                image.likeIcon = "dispBlock";
+                image.likedIcon = "dispNone";
                 this.setState({
                     likeIcon: "dispBlock",
                     likedIcon: "dispNone",
-                    likesCount: post.likesCount,
+                    likesCount: image.likesCount,
                 });
             }
         }, this);
@@ -206,14 +204,14 @@ class Profile extends Component {
             alert("Cannot add Empty comment");
         } else {
             let imageBase = this.state.imageBase;
-            imageBase.forEach(function (post) {
-                if (post.id === id) {
-                    post.postComments.push(this.state.comment);
+            imageBase.forEach(function (image) {
+                if (image.id === id) {
+                    image.postComments.push(this.state.comment);
                     this.setState({
                         comment: "",
-                        postComments: post.postComments,
+                        postComments: image.postComments,
                     });
-                    post.clear = "";
+                    image.clear = "";
                 }
             }, this);
         }
@@ -341,9 +339,9 @@ class Profile extends Component {
                             <div className="image-grid">
                                 <div className={classes.main}>
                                     <GridList cellHeight={400} className={classes.gridStyle} cols={3} >
-                                        {this.state.imageBase.map((post) => (
-                                            <GridListTile key={"grid" + post.id} onClick={() => this.postModalOpenHandler(post.id)} >
-                                                <img src={post.media_url} alt={this.state.username} />
+                                        {this.state.imageBase.map((image) => (
+                                            <GridListTile key={"grid" + image.id} onClick={() => this.postModalOpenHandler(image.id)} >
+                                                <img src={image.media_url} alt={this.state.username} />
                                             </GridListTile>
                                         ))}
                                     </GridList>
@@ -356,7 +354,7 @@ class Profile extends Component {
                                 >
                                     <div style={inlineStyle} className={classes.editStyle}>
                                         <div className="modal-container">
-                                            <div className="post-modal-image-container">
+                                            <div className="modal-image-container">
                                                 <img
                                                     src={this.state.imageUrl}
                                                     alt={this.state.username}
@@ -386,9 +384,9 @@ class Profile extends Component {
                                                     {this.formattedCaption()}
                                                 </Typography>
                                                 {this.getCommentSection()}
-                                                <div className="post-modal-likes">
+                                                <div className="modal-likes">
                                                     <div className={this.state.likeIcon} onClick={() =>
-                                                            this.likeClickHandler(this.state.postId)
+                                                            this.likeClickHandler(this.state.imageId)
                                                         }
                                                     >
                                                         <FavoriteBorderIcon />
@@ -396,7 +394,7 @@ class Profile extends Component {
                                                     <div className={this.state.likedIcon}>
                                                         <FavoriteIcon style={{ color: "red" }}
                                                             onClick={() =>
-                                                                this.likedClickHandler(this.state.postId)
+                                                                this.likedClickHandler(this.state.imageId)
                                                             }
                                                         />
                                                     </div>
@@ -420,7 +418,7 @@ class Profile extends Component {
                                                     </FormControl>
                                                     <Button variant="contained" color="primary" style={{ marginLeft: 20 }}
                                                         onClick={() =>
-                                                            this.addCommentHandler(this.state.postId)
+                                                            this.addCommentHandler(this.state.imageId)
                                                         }
                                                     >
                                                         ADD

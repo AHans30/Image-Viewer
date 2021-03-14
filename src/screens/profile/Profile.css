@@ -65,7 +65,7 @@
   width: 45px;
 }
 
-.post-modal-image-container {
+.modal-image-container {
   margin-right: 10px;
   width: 300px;
   height: 400px;
@@ -77,7 +77,7 @@
   flex-direction: column;
 }
 
-.post-modal-likes {
+.modal-likes {
   display: flex;
   flex-direction: row;
   align-items: center;
