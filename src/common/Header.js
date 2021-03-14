@@ -3,12 +3,14 @@ import "./Header.css";
 import { withStyles } from "@material-ui/core/styles";
 import { ListItemText, Input, IconButton, Menu, MenuItem, Typography, Divider} from "@material-ui/core/";
 import SearchIcon from "@material-ui/icons/Search";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             type: "",
+            logoLink: this.props.screen === "login" ? "/" : "/home",
         };
     }
 
@@ -23,13 +25,59 @@ class Header extends Component {
 
     searchChangeHandler = (event) => {
         let keyword = event.target.value.trimEnd();
-        this.props.callbackFromHome(keyword);
+        this.props.searchBarHandler(keyword);
     };
 
     onLogout = () => {
         sessionStorage.removeItem("access-token");
         this.props.history.push("/");
     };
+
+    myAccountHandler = () => {
+        this.props.history.push("/profile")
+            // {
+            //     pathname: "/profile", 
+            //     state: {
+            //         here: this.props.sendImages(),
+            //         hello: "Yabadaba",
+            //             }
+            // });
+        // return (
+        //     <Redirect 
+        //     to={{
+        //         pathname: "/profile", 
+        //         state: { here: this.props.sendImages(), 
+        //                     hello: "Yabadaba", }
+        //             }} />
+        // )
+      };
+
+    renderMyAccount() {
+        const inlineStyles = {
+            bold: { fontWeight: "bold" },
+            search: { "aria-label": "search" },
+        }
+
+        if(this.props.screen === "home"){
+            return (
+                [
+                    <StyledMenuItem>
+                    <ListItemText
+                        primary={
+                            <Typography type="body2" style={inlineStyles.bold}>
+                                My Account
+                            </Typography>
+                            }
+                        onClick={this.myAccountHandler}
+                    />
+                    </StyledMenuItem>,
+                    <Divider variant="middle" />
+                ]
+            )
+        } else {
+            return null
+        }
+    }
 
     render() {
         const { classes } = this.props;
@@ -42,9 +90,11 @@ class Header extends Component {
         return (
             <div>
                 <header className="app-header">
-                    <span className="logo">
-                        Image Viewer
-                    </span>
+                    <Link to={this.state.logoLink}>
+                        <span className="logo">
+                            Image Viewer
+                        </span>
+                    </Link>
                     <div>
                         {this.props.isLoggedIn && 
                             <div className="profile-container">
@@ -56,16 +106,7 @@ class Header extends Component {
                                     anchorEl={this.state.type}
                                     onClose={this.closeMenuHandler}
                                 >
-                                    <StyledMenuItem>
-                                        <ListItemText
-                                            primary={
-                                                <Typography type="body2" style={inlineStyles.bold}>
-                                                    My Account
-                                                </Typography>
-                                                }
-                                        />
-                                    </StyledMenuItem>
-                                    <Divider variant="middle" />
+                                    {this.renderMyAccount()}
                                     <StyledMenuItem>
                                         <ListItemText
                                             primary={
@@ -80,8 +121,9 @@ class Header extends Component {
                             </div>
                         }
                     </div>
+
                     <div>
-                        {this.props.isLoggedIn &&
+                        {(this.props.isLoggedIn) && (this.props.screen==="home") &&
                             <div className={classes.searchBar}>
                                 <div className={classes.searchIcon}>
                                     <SearchIcon />
@@ -99,6 +141,13 @@ class Header extends Component {
             </div>
         );
     }
+}
+
+Header.defaultProps = {
+    screen: "login",
+    isLoggedIn: false,
+    profilePic: "https://instagram.fbom35-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158183129_947536299373688_8583409002884684500_n.jpg?tp=1&_nc_ht=instagram.fbom35-1.fna.fbcdn.net&_nc_ohc=wKQEc3Qxs6QAX8bsWM8&oh=074d47a1fd4d3d1de7f4387ce9f6285e&oe=60720D64",
+    baseUrl: "https://graph.instagram.com/",
 }
 
 const styles = (theme) => ({

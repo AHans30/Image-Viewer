@@ -1,0 +1,91 @@
+.main-container {
+  margin: 10px 100px;
+}
+
+.info {
+  display: flex;
+}
+
+.info-content {
+  margin: 5px 50px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-image {
+  margin-left: 150px;
+  border-radius: 50%;
+  height: 150px;
+  width: 150px;
+}
+
+.info-metrics {
+  display: flex;
+  margin-top: 10px;
+}
+
+.info-name {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.dispNone {
+  display: none;
+}
+
+.dispBlock {
+  display: block;
+}
+
+.red {
+  color: red;
+}
+
+.image-grid {
+  margin: 20px 10px;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-avatar {
+  border-radius: 50%;
+  height: 45px;
+  width: 45px;
+}
+
+.post-modal-image-container {
+  margin-right: 10px;
+  width: 300px;
+  height: 400px;
+}
+
+.modal-comments-holder {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-modal-likes {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 150px 0px 0px 0px;
+}
+
+.modal-comments {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

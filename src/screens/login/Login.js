@@ -36,7 +36,7 @@ class Login extends Component {
 
         let dummyUsername = "ahans30";
         let dummyPassword = "password";
-        let accessToken = "IGQVJYV2RoUmY5WDgxMTJ1eFA5WjhySzhCTVNnLVVkUkh4NS0wOWpYYXBvNjVzVUQ5U3pHVzJQeUdaRVB5a0s1Y1Y4S3RXTjNvMEpZAUzZAFNHZAoZAldUdHBZASDJmc080NGp1VXM5QjBfNUxqbkZAJM3RnSURMbi0xUFJEd2xj";
+        let accessToken = "IGQVJXT25DbGxkbnVILVk5WVFkSlQxaWdHUWZAwNW1yZA1dBZAUF1NHJmSUN6eE5MQkExdDZAxVGtZANFRXWmcybGhFOUI3emxkWXQ1MEpWeTU2VkFjZAGhiSWxTQnNER05valljYnFEUUF1ZAjBvMEM4NDhpSFpYSEdjWUdnUzZAr";
 
         if ((this.state.username === dummyUsername) && (this.state.password === dummyPassword)) {
             window.sessionStorage.setItem("access-token", accessToken);
@@ -85,12 +85,7 @@ class Login extends Component {
                             </FormControl>
                             <br />
                             <br />
-                            <Button 
-                            component={Link} to={'/home'} 
-                            variant="contained" 
-                            color="primary" 
-                            onClick={this.loginClickHandler}
-                            >
+                            <Button component={Link} to={'/home'} variant="contained"  color="primary" onClick={this.loginClickHandler}>
                             LOGIN
                             </Button>
                         </div>

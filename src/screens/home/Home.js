@@ -226,6 +226,10 @@ class Home extends Component {
         this.setState({ imageList: filterImages});
     };
 
+    sendImages = () => {
+        return "here!!!";
+    }
+
     render() {
         const { classes } = this.props;
         const isLoggedIn = this.state.isLoggedIn;
@@ -236,12 +240,14 @@ class Home extends Component {
                 {isLoggedIn &&
                     <div>
                         <Header
+                            screen="home"
                             isLoggedIn={this.state.isLoggedIn}
                             profilePic={this.state.profilePic}
                             baseUrl={this.props.baseUrl}
                             list={this.state.imageBase}
-                            callbackFromHome={this.searchKeywordHandler}
+                            searchBarHandler={this.searchKeywordHandler}
                             history={this.props.history}
+                            sendImages={this.sendImages}
                         />
                         <div className="home-page-container">
                             {this.state.imageList.map((image) => (

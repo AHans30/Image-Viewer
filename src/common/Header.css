@@ -18,10 +18,11 @@
 }
 
 .icon {
-    justify-content: center;
+    display: inline;
     flex-direction: row;
     align-items: center;
-    display: flex;
+    justify-content: center;
+    vertical-align: middle
 }
 
 
