@@ -9,18 +9,18 @@ class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            type: "",
+            isMenuOpen: "", //"" or null or undefined are considered as falsy values in JS
             logoLink: this.props.screen === "login" ? "/" : "/home",
         };
     }
 
     openMenuHandler = (event) => {
-        console.log(event.currentTarget)
-        this.setState({ type: event.currentTarget });
+        //console.log(event.currentTarget)
+        this.setState({ isMenuOpen: event.currentTarget });
     };
 
     closeMenuHandler = () => {
-        this.setState({ type: null });
+        this.setState({ isMenuOpen: null });
     };
 
     searchChangeHandler = (event) => {
@@ -101,9 +101,9 @@ class Header extends Component {
                                 <IconButton className="icon" onClick={this.openMenuHandler}>
                                     <img className="avatar" src={this.props.profilePic} alt="pic" />
                                 </IconButton>
-                                <AccountMenu open={Boolean(this.state.type)} 
+                                <AccountMenu open={Boolean(this.state.isMenuOpen)} 
                                     keepMounted id="dropdown" 
-                                    anchorEl={this.state.type}
+                                    anchorEl={this.state.isMenuOpen}
                                     onClose={this.closeMenuHandler}
                                 >
                                     {this.renderMyAccount()}
