@@ -72,7 +72,7 @@ class Header extends Component {
                         onClick={this.myAccountHandler}
                     />
                     </StyledMenuItem>,
-                    <Divider variant="middle" />
+                    <Divider variant="middle" key="divider"/>
                 ]
             )
         } else {
@@ -148,7 +148,6 @@ class Header extends Component {
 Header.defaultProps = {
     screen: "login",
     isLoggedIn: false,
-    profilePic: "https://instagram.fbom35-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158183129_947536299373688_8583409002884684500_n.jpg?tp=1&_nc_ht=instagram.fbom35-1.fna.fbcdn.net&_nc_ohc=wKQEc3Qxs6QAX8bsWM8&oh=074d47a1fd4d3d1de7f4387ce9f6285e&oe=60720D64",
     baseUrl: "https://graph.instagram.com/",
 }
 

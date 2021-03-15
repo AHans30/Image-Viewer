@@ -313,8 +313,8 @@ class Home extends Component {
                                             </CardActions>
                                             <div className="comments-section">
                                                 {image.commentContent.map((value, index) => (
-                                                    <CardActions>
-                                                        <div key={"comment" + index}>
+                                                    <CardActions key={"comment" + index}>
+                                                        <div >
                                                             <Typography
                                                                 key={"comment-text" + index}
                                                                 variant="body2"
