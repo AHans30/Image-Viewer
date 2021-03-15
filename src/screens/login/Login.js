@@ -2,14 +2,17 @@ import React, { Component } from 'react';
 import Header from '../../common/Header';
 import './Login.css';
 import { Link } from "react-router-dom";
-
 import { Card, FormControl, FormHelperText, Typography, InputLabel, Input, Button } from '@material-ui/core/';
 
+//This is Login component and provides the functionality of loggin a user in based on pre-set username and password
+// { username: ahans30
+//   password: password }
 class Login extends Component {
 
     constructor() {
         super();
         this.state = {
+            //To check if user is successfully logged into the application.
             isLoggedIn: window.sessionStorage.getItem("access-token") !== null ? true : false,
             username: "",
             usernameRequiredAlert: "dispNone",
@@ -19,14 +22,18 @@ class Login extends Component {
         }
     }
 
+    //Method used to catch value changes in username field of login form
     userNameChangeHandler = (event) => {
         this.setState({ username: event.target.value })
     }
 
+    //Method used to catch value changes in password field of login form
     passwordChangeHandler = (event) => {
         this.setState({ password: event.target.value });
     }
 
+    //Method run on login by the user. This validates the required fields and logs in user if entered user id and password
+    // are same as mentioned above (and hard coded below).
     loginClickHandler = () => {
         this.setState({ incorrectCredentialsAlert: "dispNone" })
 
@@ -37,18 +44,23 @@ class Login extends Component {
 
         let dummyUsername = "ahans30";
         let dummyPassword = "password";
-        let accessToken = "IGQVJVWDFNb1g4cGo3dzBpTUZAqcGx5cFJkR0FrOXBrM3JwVG80NGlTY1BTOURKUjNYQUsza0VaTGtuUUFOd090QlY4QmpKSWpycjI2bU5SYnhQVkZAwcXBHSHlndEJpM3B3V1h2djV6ZAl9ZAR3J5dmxrcHZAsaE9EZAExDajJj";
+        //accessToken passed from Controller as a prop
+        let accessToken = this.props.accessToken;
 
         if ((this.state.username === dummyUsername) && (this.state.password === dummyPassword)) {
+            //If password and username are validated - the access token is saved in session storage
             window.sessionStorage.setItem("access-token", accessToken);
+            //The user is taken to home page on successful login
             this.props.history.push("/home");
         } else if (isInputFieldsValid) {
             this.setState({ incorrectCredentialsAlert: "dispBlock" })
         }
     }
 
+    //Method called if the logged in user tries to direct to login page.
     redirectToHomeIfLoggedIn(){
         if(this.state.isLoggedIn){
+            //User is redirected to homepage since s/he is already logged in
             this.props.history.push("/home")
         }
     }
@@ -63,7 +75,7 @@ class Login extends Component {
                         <div className="card-content">
                             <Typography variant="h5" component="h2">
                                 LOGIN
-                    </Typography>
+                            </Typography>
                             <br />
                             <FormControl required>
                                 <InputLabel htmlFor="username"> Username </InputLabel>
@@ -72,6 +84,7 @@ class Login extends Component {
                                     username={this.state.username}
                                     onChange={this.userNameChangeHandler} />
                                 <FormHelperText className={this.state.usernameRequiredAlert}>
+                                    {/* If empty username is passed by user - a helper text is printed */}
                                     <span className="red">required</span>
                                 </FormHelperText>
                             </FormControl>
@@ -84,6 +97,7 @@ class Login extends Component {
                                     password={this.state.password}
                                     onChange={this.passwordChangeHandler} />
                                 <FormHelperText className={this.state.passwordRequiredAlert}>
+                                    {/* If empty password is passed by user - a helper text is printed */}
                                     <span className="red">required</span>
                                 </FormHelperText>
                                 <br />

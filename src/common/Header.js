@@ -5,59 +5,61 @@ import { ListItemText, Input, IconButton, Menu, MenuItem, Typography, Divider} f
 import SearchIcon from "@material-ui/icons/Search";
 import { Link } from "react-router-dom";
 
+//This is a dynamic header component. This component renders the header of the Image Viewer Application
+// This Header renders header for all pages of application viz. Login, Home and Profile
+// The component takes in props 'screen' whose values are 'login', 'home', and 'profile'
 class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            //this state captures if the dropdown menu is open or closed. 
             isMenuOpen: "", //"" or null or undefined are considered as falsy values in JS
+            //Dynamically changes the redirection of logo - login page if not logged in else home page
             logoLink: this.props.screen === "login" ? "/" : "/home",
         };
     }
 
+    //This opens dropdown of header
     openMenuHandler = (event) => {
-        //console.log(event.currentTarget)
         this.setState({ isMenuOpen: event.currentTarget });
     };
 
-    closeMenuHandler = () => {
+    //This closes dropdown of header
+    closeMenuHandler = (event) => {
         this.setState({ isMenuOpen: null });
     };
 
+    //This takes in keyword from search bar and passes it to a callback method 'searchBarHandler' received from Home page
     searchChangeHandler = (event) => {
         let keyword = event.target.value.trimEnd();
+        //searchBarHandler is a method defined in Home component and takes care of dynamic searching 
+        // of images/posts based on keyword passed 
         this.props.searchBarHandler(keyword);
     };
 
+    //Logs out user by deleting the access token and takes user to login page
     onLogout = () => {
         sessionStorage.removeItem("access-token");
         this.props.history.push("/");
     };
 
+    //Takes user to profile page. This option is obviously only accessible to logged in user
     myAccountHandler = () => {
         this.props.history.push("/profile")
-            // {
-            //     pathname: "/profile", 
-            //     state: {
-            //         here: this.props.sendImages(),
-            //         hello: "Yabadaba",
-            //             }
-            // });
-        // return (
-        //     <Redirect 
-        //     to={{
-        //         pathname: "/profile", 
-        //         state: { here: this.props.sendImages(), 
-        //                     hello: "Yabadaba", }
-        //             }} />
-        // )
       };
 
+    //Renders the option in dropdown for redirecting to profile page. 
+    //This method takes care of conditional rendering based on current screen. 
+    //Redirection option is only available to user on home page.  
     renderMyAccount() {
+
+        //Inline styling used here by declaring as a const
         const inlineStyles = {
             bold: { fontWeight: "bold" },
             search: { "aria-label": "search" },
         }
 
+        //If the user is on home page
         if(this.props.screen === "home"){
             return (
                 [
@@ -81,6 +83,7 @@ class Header extends Component {
     }
 
     render() {
+        //Inline styling used here by declaring as a const
         const { classes } = this.props;
         const inlineStyles = {
             bold: { fontWeight: "bold" },
@@ -97,9 +100,10 @@ class Header extends Component {
                         </span>
                     </Link>
                     <div>
+                        {/* Conditional rendering of content based on if user if logged in or not */}
                         {this.props.isLoggedIn && 
-                            <div className="profile-container">
-                                <IconButton className="icon" onClick={this.openMenuHandler}>
+                            <div className="profile-container" style={{cursor: "pointer"}}>
+                                <IconButton className="icon" onClick={this.openMenuHandler} >
                                     <img className="avatar" src={this.props.profilePic} alt="pic" />
                                 </IconButton>
                                 <AccountMenu open={Boolean(this.state.isMenuOpen)} 
@@ -107,6 +111,7 @@ class Header extends Component {
                                     anchorEl={this.state.isMenuOpen}
                                     onClose={this.closeMenuHandler}
                                 >
+                                    {/* Conditional rendering of 'My Account' option in dropdown for redirect to profile page */}
                                     {this.renderMyAccount()}
                                     <StyledMenuItem key="dropdownLogoutItem">
                                         <ListItemText
@@ -125,6 +130,8 @@ class Header extends Component {
                     </div>
 
                     <div>
+                        {/* Conditional rendering of search bar - which is only available to logged in user
+                        currently on home page */}
                         {(this.props.isLoggedIn) && (this.props.screen==="home") &&
                             <div className={classes.searchBar}>
                                 <div className={classes.searchIcon}>
@@ -151,7 +158,11 @@ Header.defaultProps = {
     baseUrl: "https://graph.instagram.com/",
 }
 
+//styles which are used as Higher Order Components in react
+//This is clean method of using inline styling and reacts's design which allows components to composited within each other
 const styles = (theme) => ({
+
+    //Styling for search icon
     searchIcon: {
         justifyContent: "center",
         display: "flex",
@@ -162,6 +173,7 @@ const styles = (theme) => ({
         padding: theme.spacing(0, 2),
     },
 
+    //styling for search bar
     searchBar: {
         marginLeft: 0,
         width: "300px",
@@ -186,6 +198,9 @@ const styles = (theme) => ({
 
 const StyledMenuItem = withStyles((theme) => ({ root: {}, }))(MenuItem);
 
+//This is another higher order component (HOC) - which is a Menu component from material-ui
+// and is styled by using HOC styling design in react. 
+//This method is used for our dropdown.
 const AccountMenu = withStyles({
     paper: {
         border: "4px",

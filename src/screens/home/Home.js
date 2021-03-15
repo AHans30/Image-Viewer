@@ -5,9 +5,11 @@ import { withStyles } from "@material-ui/core/styles";
 import { Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, Typography, Divider, Tooltip } from '@material-ui/core/';
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import { FormControl, Input, InputLabel, Button, FormHelperText } from "@material-ui/core/";
-
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
+//This our Home component which displays home page to users after successfully logging in
+//This page displays user's posts - fetched by AJAX calls from Instragram API using the endpoint supplied by user
+//User have functionality of search bar b
 class Home extends Component {
     constructor() {
         super();
@@ -15,11 +17,24 @@ class Home extends Component {
             isLoggedIn: window.sessionStorage.getItem("access-token") !== null ? true : false,
             //Profile picture is hard coded since it is not available from Instagram APIs
             profilePic: "https://instagram.fbom35-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158183129_947536299373688_8583409002884684500_n.jpg?tp=1&_nc_ht=instagram.fbom35-1.fna.fbcdn.net&_nc_ohc=wKQEc3Qxs6QAX8bsWM8&oh=074d47a1fd4d3d1de7f4387ce9f6285e&oe=60720D64",
+            //This array maintaines the list of media IDs and their respective captions
+            //This array is returned from Instagram API 1 - which fetches all posts associated with user's account.
+            //Using media IDs - we can make further AJAX calls to get other info such as - URL, username, etc. 
             allMediaIds: [],
+
+            //This state variable captures all images by the user.
+            //This acts as a cache since all the images of user to be displayed are taken from this.
             imageBase: [],
+            //This state variables displays on the homepage
+            //This and imageBase varies - since this have all images avialable based on search keyword
+            //If search bar is empty imageBase == imageList. 
             imageList: [],
+
+            //CSS display class for like icon - by default all pics are unliked
             likeIcon: "dispBlock",
+            //CSS display class for liked icon - by default all pics are unliked
             likedIcon: "dispNone",
+            //Comments required as a helper text if user tries to comments an emoty comment
             commentRequiredAlert: {},
             commentArea: "dispNone",
             commentsDisplay: {},
@@ -29,27 +44,8 @@ class Home extends Component {
 
     // getHashtag = (caption) => caption.split(' ').filter(v => v.startsWith('#'))
 
-    // getFormattedCaptionString = (caption) => {
-    //     if (!caption) {
-    //         return null;
-    //     }
-    //     let captionWords = caption.split(" ")
-    //     let hashtags = this.getHashtag(caption)
-
-    //     captionWords.map(function (word) {
-    //         if (hashtags.includes(word)) {
-    //             console.log("Hashtag " + word)
-    //             return (
-    //                 <div>blue {word}</div>
-    //             )
-    //         } else {
-    //             return (
-    //                 <div>word</div>
-    //             )
-    //         }
-    //     })
-    // }
-
+    //This method is run after the component is mounted.
+    //This method makes AJAX calls to get media Ids associated with the account attached with access token supplied
     componentDidMount() {
         let data = null;
         let xhrMediaIds = new XMLHttpRequest();
@@ -61,6 +57,8 @@ class Home extends Component {
         xhrMediaIds.setRequestHeader("Content-Type", "application/json");
         xhrMediaIds.send(data);
 
+        //Since inside callback - 'this' will refer to the AJAX object of XMLHttpRequest type
+        //We save the reference to the object 'Home' in local variable 'that'
         let that = this;
         xhrMediaIds.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
@@ -74,13 +72,43 @@ class Home extends Component {
                         return that.getMedia(mediaObject);
                     });
                 } else {
+                    //If status code !==200 ie username and password are correct but the access token provided by user
+                    // has either reached its limit or expired.
+                    //In this case - user is alerted the same and is advised to try again or update the access token.
                     alert("Your access-token has expired or reached its limit. Please update your access token and/or try again later.");
+                    sessionStorage.removeItem("access-token");
+                    //The user is then taken to login page to try again.
                     that.props.history.push("/")
                 }
             }
         });
     }
 
+    //This method fetches data pertaining to all media Ids fetched from first API
+    getMedia(mediaObject) {
+        let data = null;
+        let xhr = new XMLHttpRequest();
+        let accessToken = window.sessionStorage.getItem("access-token");
+
+        xhr.open("GET", this.props.baseUrl + mediaObject.id + "?fields=id,media_type,media_url,username,timestamp&access_token=" + accessToken );
+        xhr.setRequestHeader("Cache-Control", "no-cache");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+
+        let that = this;
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                let responseMedia = JSON.parse(this.responseText);
+                //**** PLEASE NOTE: We filter only for IMAGE type data and filter out VIDEO/CAROUSEL ALBUM medias as per TA
+                if(responseMedia.media_type === "IMAGE") {
+                    //This further calls method 'addImages' to populate state objects ie. store/cache the info received from the second API
+                    that.addImage(responseMedia, mediaObject.caption);
+                }
+            }
+        });
+    }
+
+    // This method also populates state objects to store/cache the info received from the second API
     addImage(imageResponse, caption) {
         let image = {};
 
@@ -121,28 +149,7 @@ class Home extends Component {
 
     }
 
-    getMedia(mediaObject) {
-        let data = null;
-        let xhr = new XMLHttpRequest();
-        let accessToken = window.sessionStorage.getItem("access-token");
-
-        xhr.open("GET", this.props.baseUrl + mediaObject.id + "?fields=id,media_type,media_url,username,timestamp&access_token=" + accessToken );
-        xhr.setRequestHeader("Cache-Control", "no-cache");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(data);
-
-        let that = this;
-        xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4) {
-                let responseMedia = JSON.parse(this.responseText);
-                //We filter only for IMAGE type data and filter out VIDEO/CAROUSEL ALBUM medias as per TA
-                if(responseMedia.media_type === "IMAGE") {
-                    that.addImage(responseMedia, mediaObject.caption);
-                }
-            }
-        });
-    }
-
+    //This method takes care of liking the image - updating like icon to liked and incrementing likes
     likeClickHandler = (id) => {
         let imageList = this.state.imageList;
         imageList.forEach(function (image) {
@@ -158,6 +165,7 @@ class Home extends Component {
         }, this);
     };
 
+    //This method takes care of unliking the image - updating liked icon to like and decrementing likes
     unlikeClickHandler = (id) => {
         let imageList = this.state.imageList;
         imageList.forEach(function (image) {
@@ -173,6 +181,7 @@ class Home extends Component {
         }, this);
     };
 
+    //This method captures change in value of comment box input
     commentChangeHandler = (event, id) => {
         this.setState({ comment: event.target.value });
         let imageList = this.state.imageList;
@@ -183,6 +192,8 @@ class Home extends Component {
         }, this);
     };
 
+    //This method add comments or renders helper text 'required' in case user has passed empty comment
+    // This dynamically takes of image the user is interacting with depending on image id
     addCommentHandler = (id) => {
         if (!this.state.comment) {
             let commentRequiredAlert = this.state.commentRequiredAlert;
@@ -209,6 +220,7 @@ class Home extends Component {
         }
     };
 
+    //This method returns datetime in required format to be rendered for each image
     getDatetimeString(timestamp){
         //Padding 0 in front of dates amd months to achieve dd/mm/yyyy date format
         let datetimeString = String(timestamp.getDate()).padStart(2, '0') + "/" +
@@ -218,16 +230,15 @@ class Home extends Component {
         return datetimeString;
     }
 
+    //This method takes in keyword and filters the imageList (which is dynamically rendered) state object
+    //This method is passed a prop to Header component and hence called from respective component
+    //This is because since the searchBar and keyword are located in the Header component
     searchKeywordHandler = (keyword) => {
         let filterImages = this.state.imageBase.filter((image) => {
                 return String(image.caption).toLowerCase().indexOf(keyword) >= 0;
             });
         this.setState({ imageList: filterImages});
     };
-
-    sendImages = () => {
-        return "here!!!";
-    }
 
     render() {
         const { classes } = this.props;
@@ -266,6 +277,8 @@ class Home extends Component {
                                             < br />
                                             <Divider />
                                             <Typography variant="body2" color="inherit" component="p">
+                                                {/* Following code dynamically renders #hashtags as blue in colour present in the
+                                                    caption of the media. This view is as per discussion from TA in live session. */}
                                                 {image.caption && image.caption.split(" ").map(function (word, index) {
                                                     if (image.caption) {
                                                         let hashtags = image.caption.split(' ').filter(v => v.startsWith('#'))
@@ -377,7 +390,7 @@ class Home extends Component {
         );
     }
 }
-
+//This is for HOC component with inline styling as per react design with help of material-ui
 const imageStyle = (theme) => ({
     image: {
         height: 150,

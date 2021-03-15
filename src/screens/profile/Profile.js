@@ -8,7 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 
-
+//This component displays the Profile page of the Image Viewer application.
 class Profile extends Component {
     constructor() {
         super();
@@ -18,17 +18,21 @@ class Profile extends Component {
             profilePic: "https://instagram.fbom35-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158183129_947536299373688_8583409002884684500_n.jpg?tp=1&_nc_ht=instagram.fbom35-1.fna.fbcdn.net&_nc_ohc=wKQEc3Qxs6QAX8bsWM8&oh=074d47a1fd4d3d1de7f4387ce9f6285e&oe=60720D64",
             allMediaIds: [],
 
+            //Hard coded values since these are not available from Basic Instagram API
             totalPostCount: 0,
             followingCount: 31,
             followersCount: 26,
             accountName: "Abhimanyu Hans",
+
             editModal: false,
             updateRequiredAlert: "dispNone",
             name: "",
             imageBase: [],
             showModal: false,
 
-            imageUrl: "",
+            //Metadata for displaying image currently selected in modal by the user
+            commentRequiredAlert: "dispNone",
+            media_url: "",
             username: "",
             caption: "",
             likeIcon: "",
@@ -39,6 +43,8 @@ class Profile extends Component {
         };
     }
 
+    //This method is run after the component is mounted.
+    //This method makes AJAX calls to get media Ids associated with the account attached with access token supplied
     componentDidMount() {
         let data = null;
         let xhrMediaIds = new XMLHttpRequest();
@@ -50,6 +56,8 @@ class Profile extends Component {
         xhrMediaIds.setRequestHeader("Content-Type", "application/json");
         xhrMediaIds.send(data);
 
+        //Since inside callback - 'this' will refer to the AJAX object of XMLHttpRequest type
+        //We save the reference to the object 'Home' in local variable 'that'
         let that = this;
         xhrMediaIds.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
@@ -62,13 +70,19 @@ class Profile extends Component {
                             return that.getMedia(mediaObject);
                         });
                 } else {
+                    //If status code !==200 ie username and password are correct but the access token provided by user
+                    // has either reached its limit or expired.
+                    //In this case - user is alerted the same and is advised to try again or update the access token.
                     alert("Your access-token has expired or reached its limit. Please update your access token and/or try again later.");
+                    sessionStorage.removeItem("access-token");
+                    //The user is then taken to login page to try again.
                     that.props.history.push("/")
                 }
             }
         });
     }
 
+    //This method fetches data pertaining to all media Ids fetched from first API
     getMedia(mediaObject) {
         let data = null;
         let xhr = new XMLHttpRequest();
@@ -83,24 +97,29 @@ class Profile extends Component {
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
                 let responseMedia = JSON.parse(this.responseText);
-                //We filter only for IMAGE type data and filter out VIDEO/CAROUSEL ALBUM medias as per TA
+                //**** PLEASE NOTE: We filter only for IMAGE type data and filter out VIDEO/CAROUSEL ALBUM medias as per TA
                 if(responseMedia.media_type === "IMAGE") {
+                    //This further calls method 'addImages' to populate state objects ie. store/cache the info received from the second API
                     that.addImage(responseMedia, mediaObject.caption);
                 }
             }
         });
     }
 
+    // This method also populates state objects to store/cache the info received from the second API
     addImage(imageResponse, caption) {
         let image = {};
 
         image.id = imageResponse.id;
+        //caption is captured while retrieving media IDs requests using access token
         image.caption = caption
         image.media_url = imageResponse.media_url;
         image.profilePic = this.state.profilePic;
         image.username = imageResponse.username;
         image.likeIcon = "dispBlock";
         image.likedIcon = "dispNone";
+        //Random number of likes as last digit of media id since cannot retreive comments from Instagram API
+        //Here is the number of like is taken as last digit of media_id given by Instagram API
         image.likesCount = Number(image.id.slice(-1));
         image.clear = "";
         image.postComments = [];
@@ -126,29 +145,37 @@ class Profile extends Component {
 
     }
 
+    //This method allows user to open edit account name modal
     editModalHandler = () => {
         this.setState({ editModal: true, updateRequiredAlert: "dispNone", name: "" });
     };
 
+    //This method allows user to close the modal of selected image
     modalCloseHandler = () => {
         this.setState({ editModal: false, updateRequiredAlert: "dispNone" });
     };
 
+    //This modal allows user to capture change in account name value eneter by user
     inputNameChangeHandler = (event) => {
         this.setState({ name: event.target.value });
     };
 
+    //This method changes the accountName in runtime dynamically
     editNameHandler = () => {
         this.state.name === ""
             ? this.setState({ updateRequiredAlert: "dispBlock" })
             : this.setState({ accountName: this.state.name, editModal: false });
     };
-
-    postModalCloseHandler = () => {
+    
+    //This method closes the selected image modal
+    imageModalCloseHandler = () => {
         this.setState({ showModal: false });
+        this.setState({commentRequiredAlert: "dispNone"});
     };
 
-    postModalOpenHandler = (imageId) => {
+    //This method opens the selected image modal and stores/caches the metadata of the image
+    // in state variables. This allows user to add comments, like or unlike an image
+    imageModalOpenHandler = (imageId) => {
         this.setState({ showModal: true });
         //filter the post according to the id and display it
         let modalImage = this.state.imageBase.filter((image) => {
@@ -156,7 +183,7 @@ class Profile extends Component {
         })[0];
 
         this.setState({
-            imageUrl: modalImage.media_url,
+            media_url: modalImage.media_url,
             username: modalImage.username,
             caption: modalImage.caption,
             likeIcon: modalImage.likeIcon,
@@ -166,7 +193,8 @@ class Profile extends Component {
             postComments: modalImage.postComments,
         });
     };
-
+    
+    //This method takes cares of liking the modal image
     likeClickHandler = (id) => {
         let imageBase = this.state.imageBase;
         imageBase.forEach(function (image) {
@@ -183,7 +211,8 @@ class Profile extends Component {
         }, this);
     };
 
-    likedClickHandler = (id) => {
+    //This method takes cares of unliking the modal image
+    unlikeClickHandler = (id) => {
         let imageBase = this.state.imageBase;
         imageBase.forEach(function (image) {
             if (image.id === id) {
@@ -199,11 +228,14 @@ class Profile extends Component {
         }, this);
     };
 
+    //This method allows user to comment on modal image.
+    //This method also validates and renders helper text in case if empty comment
     addCommentHandler = (id) => {
         if (this.state.comment === "") {
-            alert("Cannot add Empty comment");
+            this.setState({commentRequiredAlert: "dispBlock"});
         } else {
             let imageBase = this.state.imageBase;
+            this.setState({commentRequiredAlert: "dispNone"});
             imageBase.forEach(function (image) {
                 if (image.id === id) {
                     image.postComments.push(this.state.comment);
@@ -217,10 +249,13 @@ class Profile extends Component {
         }
     };
 
+    //This method is used to track the changes in comment input box
     commentChangeHandler = (event) => {
         this.setState({ comment: event.target.value });
     };
 
+    //This method returns the caption such that #hashtags are formatted blue as done in instagram
+    //****Please note this is done as per discussion with TA during live session */
     formattedCaption() {
         let caption = this.state.caption;
         if(caption) {
@@ -248,6 +283,7 @@ class Profile extends Component {
         }
     }
 
+    //This method renders the comment section dynamically based upon the comments are there or not.
     getCommentSection() {
         if(this.state.postComments)
             if(this.state.postComments.length > 0){
@@ -280,9 +316,13 @@ class Profile extends Component {
 
         return (
             <div>
-                {this.state.isLoggedIn ? (
+                {this.state.isLoggedIn &&
                     <div>
-                        <Header screen="profile" isLoggedIn={true} history={this.props.history} />
+                        <Header 
+                        screen="profile" 
+                        isLoggedIn={true} 
+                        history={this.props.history}
+                        profilePic={this.state.profilePic} />
                         <div className="main-container">
                             <div className="info">
                                 <img className="info-image" src={this.state.profilePic} alt={this.state.username} />
@@ -340,7 +380,7 @@ class Profile extends Component {
                                 <div className={classes.main}>
                                     <GridList cellHeight={400} className={classes.gridStyle} cols={3} >
                                         {this.state.imageBase.map((image) => (
-                                            <GridListTile key={"grid" + image.id} onClick={() => this.postModalOpenHandler(image.id)} >
+                                            <GridListTile key={"grid" + image.id} onClick={() => this.imageModalOpenHandler(image.id)} >
                                                 <img src={image.media_url} alt={this.state.username} />
                                             </GridListTile>
                                         ))}
@@ -348,7 +388,7 @@ class Profile extends Component {
                                 </div>
                                 <Modal
                                     open={this.state.showModal}
-                                    onClose={this.postModalCloseHandler}
+                                    onClose={this.imageModalCloseHandler}
                                     aria-labelledby="simple-modal-title"
                                     aria-describedby="simple-modal-description"
                                 >
@@ -356,7 +396,7 @@ class Profile extends Component {
                                         <div className="modal-container">
                                             <div className="modal-image-container">
                                                 <img
-                                                    src={this.state.imageUrl}
+                                                    src={this.state.media_url}
                                                     alt={this.state.username}
                                                     height="90%"
                                                     width="100%"
@@ -394,7 +434,7 @@ class Profile extends Component {
                                                     <div className={this.state.likedIcon}>
                                                         <FavoriteIcon style={{ color: "red" }}
                                                             onClick={() =>
-                                                                this.likedClickHandler(this.state.imageId)
+                                                                this.unlikeClickHandler(this.state.imageId)
                                                             }
                                                         />
                                                     </div>
@@ -415,6 +455,9 @@ class Profile extends Component {
                                                         onChange={this.commentChangeHandler} 
                                                         value={this.state.comment}
                                                         />
+                                                        <FormHelperText className={this.state.commentRequiredAlert}>
+                                                            <span className="red">required</span>
+                                                        </FormHelperText>
                                                     </FormControl>
                                                     <Button variant="contained" color="primary" style={{ marginLeft: 20 }}
                                                         onClick={() =>
@@ -431,14 +474,13 @@ class Profile extends Component {
                             </div>
                         </div>
                     </div>
-                ) : (
-                        ""
-                    )}
+                    }
             </div>
         );
     }
 }
 
+//This is for HOC component with inline styling as per react design with help of material-ui
 const styles = (theme) => ({
 
     main: {
