@@ -185,7 +185,6 @@ class Home extends Component {
 
     addCommentHandler = (id) => {
         if (!this.state.comment) {
-            //alert("Cannot add Empty comment");
             let commentRequiredAlert = this.state.commentRequiredAlert;
             commentRequiredAlert[id] = 'required';
             this.setState({commentRequiredAlert: commentRequiredAlert});
@@ -267,22 +266,24 @@ class Home extends Component {
                                             < br />
                                             <Divider />
                                             <Typography variant="body2" color="inherit" component="p">
-                                                {image.caption && image.caption.split(" ").map(function (word) {
+                                                {image.caption && image.caption.split(" ").map(function (word, index) {
                                                     if (image.caption) {
                                                         let hashtags = image.caption.split(' ').filter(v => v.startsWith('#'))
                                                         if (hashtags) {
                                                             if (hashtags.includes(word)) {
                                                                 return (
-                                                                    <span style={{ color: "blue" }}>{word} </span>
+                                                                    <span style={{ color: "blue" }} key={"caption" + index}>{word} </span>
                                                                 )
                                                             } else {
                                                                 return (
-                                                                    <span>{word} </span>
+                                                                    <span key={"caption" + index}>{word} </span>
                                                                 )
                                                             }
                                                         } else {
-                                                            return (<span>{word} </span>)
+                                                            return (<span key={"caption" + index}>{word} </span>)
                                                         }
+                                                    } else {
+                                                        return null
                                                     }
                                                 })
                                                 }
@@ -311,10 +312,11 @@ class Home extends Component {
                                                 </div>
                                             </CardActions>
                                             <div className="comments-section">
-                                                {image.commentContent.map((value, key) => (
+                                                {image.commentContent.map((value, index) => (
                                                     <CardActions>
-                                                        <div key={"comment" + key}>
+                                                        <div key={"comment" + index}>
                                                             <Typography
+                                                                key={"comment-text" + index}
                                                                 variant="body2"
                                                                 color="inherit"
                                                                 component="span"
@@ -351,8 +353,6 @@ class Home extends Component {
                                                 </FormControl>
                                                 <Tooltip title="Add a comment">
                                                 <Button
-                                                    // key={"comment-btn-" + this.image.id}
-                                                    //={!this.state.comment}
                                                     variant="contained"
                                                     color="primary"
                                                     style={{ marginLeft: 20 }}

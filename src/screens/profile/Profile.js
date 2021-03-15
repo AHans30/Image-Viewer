@@ -225,20 +225,20 @@ class Profile extends Component {
         let caption = this.state.caption;
         if(caption) {
             return (
-                caption.split(" ").map(function (word) {
+                caption.split(" ").map(function (word, index) {
                     let hashtags = caption.split(' ').filter(v => v.startsWith('#'))
                     if (hashtags) {
                         if (hashtags.includes(word)) {
                         return (
-                            <span style={{ color: "blue" }}>{word} </span>
+                            <span style={{ color: "blue" }} key={"caption"+index}>{word} </span>
                         )
                     } else {
                         return (
-                            <span>{word} </span> 
+                            <span key={"caption"+index}>{word} </span> 
                         )
                     }
                     } else {
-                        return (<span>{word} </span>)
+                        return (<span key={"caption"+index}>{word} </span>)
                     }
                 }
                 )

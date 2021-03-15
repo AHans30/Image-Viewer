@@ -61,8 +61,9 @@ class Header extends Component {
         if(this.props.screen === "home"){
             return (
                 [
-                    <StyledMenuItem>
+                    <StyledMenuItem key="dropdownMyAccountItem">
                     <ListItemText
+                        key="dropdownMyAccount"
                         primary={
                             <Typography type="body2" style={inlineStyles.bold}>
                                 My Account
@@ -107,8 +108,9 @@ class Header extends Component {
                                     onClose={this.closeMenuHandler}
                                 >
                                     {this.renderMyAccount()}
-                                    <StyledMenuItem>
+                                    <StyledMenuItem key="dropdownLogoutItem">
                                         <ListItemText
+                                            key="dropdownLogout"
                                             primary={
                                                 <Typography type="body2" style={inlineStyles.bold}>
                                                     Logout

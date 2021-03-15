@@ -36,7 +36,7 @@ class Login extends Component {
 
         let dummyUsername = "ahans30";
         let dummyPassword = "password";
-        let accessToken = "IGQVJXT25DbGxkbnVILVk5WVFkSlQxaWdHUWZAwNW1yZA1dBZAUF1NHJmSUN6eE5MQkExdDZAxVGtZANFRXWmcybGhFOUI3emxkWXQ1MEpWeTU2VkFjZAGhiSWxTQnNER05valljYnFEUUF1ZAjBvMEM4NDhpSFpYSEdjWUdnUzZAr";
+        let accessToken = "IGQVJVWDFNb1g4cGo3dzBpTUZAqcGx5cFJkR0FrOXBrM3JwVG80NGlTY1BTOURKUjNYQUsza0VaTGtuUUFOd090QlY4QmpKSWpycjI2bU5SYnhQVkZAwcXBHSHlndEJpM3B3V1h2djV6ZAl9ZAR3J5dmxrcHZAsaE9EZAExDajJj";
 
         if ((this.state.username === dummyUsername) && (this.state.password === dummyPassword)) {
             window.sessionStorage.setItem("access-token", accessToken);
