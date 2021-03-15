@@ -10,6 +10,7 @@ class Login extends Component {
     constructor() {
         super();
         this.state = {
+            isLoggedIn: window.sessionStorage.getItem("access-token") !== null ? true : false,
             username: "",
             usernameRequiredAlert: "dispNone",
             password: "",
@@ -46,9 +47,16 @@ class Login extends Component {
         }
     }
 
+    redirectToHomeIfLoggedIn(){
+        if(this.state.isLoggedIn){
+            this.props.history.push("/home")
+        }
+    }
+
     render() {
         return (
             <div>
+                {this.redirectToHomeIfLoggedIn()}
                 <Header />
                 <div className="card-container">
                     <Card>
